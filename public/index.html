@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=1, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
+      integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
+      integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg="
+      crossorigin="anonymous"
+    />
+
+    <title>Shopping Application</title>
+
+  </head>
+  <body>
+    <div id="add">
+        <h1>Add a Product</h1><h4><b>Name :</b> <input type="text" id="name"></h4><h4><b>Price :</b> <input id="price" type="text" ></h4><h4><b>Description :</b> <input id="desc" type="text"></h4><br>
+        <button type="button" onclick="create()">Create Product</button>
+    </div>
+    <hr/>
+    <div id="show">
+        <h1>Existing Products</h1>
+    </div>
+    
+  </body>
+  <script>
+function populateData(data){
+    let str = "";
+    data.forEach((element,index) => {
+        str += `<h1>Product ${index+1}</h1>`
+        str += `<h4><b>Name :</b> <input  value="${element.name}"/></h4>`
+        str += `<h4><b>Price :</b> <input  value="${element.price}"/></h4>`
+        str += `<h4><b>Description :</b> <input  value="${element.desc}"/></h4>`
+        str += `<h4><button type="button" onclick="deleteP(${element._id})">Delete</button></h4>`
+        str += `<h4><button type="button" onclick="updateP(${element._id})">Update</button></h4>`
+        str += "</br>"
+    });
+    console.log(str)
+    document.getElementById("show").innerHTML += str;
+    }
+    function show(){
+        let url = "http://localhost:5000/api/find/";
+        
+        $.get(url).then((res) => populateData(res));
+
+    }
+    function deleteP(id){
+        let url = `http://localhost:5000/api/delete/${id}`;
+        
+        $.delete(url).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
+    }
+    function create(){
+        let url = "http://localhost:5000/api/create/";
+        const data = {
+            name:document.getElementById("name").value,
+            desc:document.getElementById("desc").value,
+            price:document.getElementById("price").value,
+        }
+        $.post(url,data).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
+    }
+    function updateP(id){
+        let url = `http://localhost:5000/api/create/${id}`;
+        const data = {
+            name:document.getElementById("name").value,
+            desc:document.getElementById("desc").value,
+            price:document.getElementById("price").value,
+        }
+        $.put(url,data).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
+    }
+    document.onload = show();
+  </script>
+</html>
