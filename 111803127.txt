@@ -1,0 +1,7 @@
+Please clone the repo 
+
+https://github.com/vasusharma7/WSTEndSem
+
+and run npm install
+
+and then move to http://localhost:5000

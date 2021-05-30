@@ -21,6 +21,12 @@
 
   </head>
   <body>
+    <div id="search">
+        <h1>Search a Product</h1>
+        <input type="search" id="inp"/>
+        <button type="button" onclick="show(document.getElementById('inp').value)">Search</button>
+    </div>
+    <hr/>
     <div id="add">
         <h1>Add a Product</h1><h4><b>Name :</b> <input type="text" id="name"></h4><h4><b>Price :</b> <input id="price" type="text" ></h4><h4><b>Description :</b> <input id="desc" type="text"></h4><br>
         <button type="button" onclick="create()">Create Product</button>
@@ -36,29 +42,33 @@ function populateData(data){
     let str = "";
     data.forEach((element,index) => {
         str += `<h1>Product ${index+1}</h1>`
-        str += `<h4><b>Name :</b> <input  value="${element.name}"/></h4>`
-        str += `<h4><b>Price :</b> <input  value="${element.price}"/></h4>`
-        str += `<h4><b>Description :</b> <input  value="${element.desc}"/></h4>`
-        str += `<h4><button type="button" onclick="deleteP(${element._id})">Delete</button></h4>`
-        str += `<h4><button type="button" onclick="updateP(${element._id})">Update</button></h4>`
+        str += `<h4><b>Name :</b> <input  id='${element._id}_name' value="${element.name}"/></h4>`
+        str += `<h4><b>Price :</b> <input  id='${element._id}_price' value="${element.price}"/></h4>`
+        str += `<h4><b>Description :</b> <input id='${element._id}_desc' value="${element.desc}"/></h4>`
+        str += `<h4><button type="button" onclick="deleteP('${element._id}')" >Delete</button></h4>`
+        str += `<h4><button type="button" onclick="updateP('${element._id}')" >Update</button></h4>`
         str += "</br>"
     });
     console.log(str)
-    document.getElementById("show").innerHTML += str;
+    if(str){
+        document.getElementById("show").innerHTML += str;    
     }
-    function show(){
-        let url = "http://localhost:5000/api/find/";
+    else
+        document.getElementById("show").innerHTML ="<h2>No Products to show";
+    }
+    function show(param){
+        let url = `http://localhost:5000/api/find/${param}`;
         
         $.get(url).then((res) => populateData(res));
 
     }
     function deleteP(id){
-        let url = `http://localhost:5000/api/delete/${id}`;
+        let url = `http://localhost:5000/api/delete/${id}?_method=DELETE`;
         
-        $.delete(url).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
+        $.post(url).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
     }
     function create(){
-        let url = "http://localhost:5000/api/create/";
+        let url = "http://localhost:5000/api/create";
         const data = {
             name:document.getElementById("name").value,
             desc:document.getElementById("desc").value,
@@ -67,14 +77,14 @@ function populateData(data){
         $.post(url,data).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
     }
     function updateP(id){
-        let url = `http://localhost:5000/api/create/${id}`;
+        let url = `http://localhost:5000/api/update/${id}?_method=PUT`;
         const data = {
-            name:document.getElementById("name").value,
-            desc:document.getElementById("desc").value,
-            price:document.getElementById("price").value,
+            name:document.getElementById(`${id}_name`).value,
+            desc:document.getElementById(`${id}_desc`).value,
+            price:document.getElementById(`${id}_price`).value,
         }
-        $.put(url,data).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
+        $.post(url,data).then((res) => {alert("success"); window.location.href = window.location.href }).catch(()=>alert('something went wrong'));
     }
-    document.onload = show();
+    document.onload = show("");
   </script>
 </html>

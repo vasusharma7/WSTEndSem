@@ -2,6 +2,8 @@ const express = require("express");
 var path = require("path");
 const app = express();
 const port = 5000;
+const methodOverride = require('method-override')
+app.use(methodOverride('_method'))
 const connectDB = require("./config/db");
 connectDB();
 
